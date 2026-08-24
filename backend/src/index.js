@@ -10,6 +10,7 @@ import {clerkMiddleware} from '@clerk/express'
 
 import User from "./models/user.model.js"
 import { connectDB } from "./lib/db.js"
+// import { startJob } from "./lib/job.js"
 import job from "./lib/job.js"
 
 const app = express()
