@@ -12,6 +12,7 @@ ENV VITE_API_URL=
 # Public Clerk key is embedded in client JS.
 ARG VITE_CLERK_PUBLISHABLE_KEY
 ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+ENV NODE_OPTIONS="--max-old-space-size=400"
 RUN npm run build
 
 # --- Stage 2: build the API bundle ---
@@ -21,6 +22,7 @@ WORKDIR /app
 COPY backend/package.json backend/package-lock.json ./
 RUN npm install --no-audit --no-fund
 COPY backend/ ./
+ENV NODE_OPTIONS="--max-old-space-size=400"
 RUN npm run build
 
 # --- Stage 3: runtime image (only prod deps + built assets) ---
