@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { hasImageKitConfig, uploadChatMedia } from "../lib/imagekit.js";
+import { getReceiverSocketId } from "../lib/socket.js";
 
 export async function getUsersForSidebar(req, res) {
   try {
@@ -116,6 +117,15 @@ export async function sendMessage(req, res) {
 
     await newMessage.save()
 
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    // Emit the new message to the receiver if they are online
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
     res.status(201).json(newMessage)
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error in sendMessage:", error.message);
+    res.status(500).json({ message: "Internal server error" })
+  }
 }
